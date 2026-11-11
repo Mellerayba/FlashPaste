@@ -69,36 +69,5 @@ All toggles apply immediately and are saved to the config file.
 
 Unknown keys are preserved. Invalid JSON falls back to defaults and logs a warning.
 
-## Testing
-
-Automated: `swift test` covers the pure logic (text cleanup, term/definition alternation, config parsing, the paste decision, enable/disable lifecycle). `scripts/smoke.sh` builds, launches the app headless for a few seconds, checks it stays alive and quits it.
-
-The GUI, the event tap and cross-app pasting cannot be automated here. Manual checklist:
-
-1. Launch the app, grant Accessibility access when prompted. The "Grant Accessibility access…" menu item disappears within 2 seconds of granting.
-2. Enable with ctrl+opt+Q. The icon goes from dimmed to normal; the menu shows "Next: term".
-3. Select text in Preview. With capture feedback on, a HUD shows "Captured: …". The menu shows it as pending.
-4. Move the mouse (or click) into the Quizlet create-set window with the term field focused. The text pastes and focus moves to the definition field.
-5. Select again in Preview, come back. The text pastes into the definition and focus lands on the next row's term. Adjust `tabsAfterDef` if it does not.
-6. Select text in a second Safari window and come back: same result, and selecting inside the Quizlet window itself never triggers a capture.
-7. Capture, then press ctrl+opt+X: nothing is pasted on arrival.
-8. Press ctrl+opt+R after a term paste: the next paste goes into a term field again.
-9. Turn on "Undo last paste", paste a term, press ctrl+opt+Z: the field is emptied and the menu shows "Next: term".
-10. Disable with ctrl+opt+Q: selecting and arriving at Quizlet does nothing; enable again and it works with exactly one paste per arrival.
-11. Toggle Launch at login from the built .app and check System Settings, General, Login Items.
-
-## Troubleshooting
-
-- **Nothing captures or pastes:** check Accessibility permission. After every rebuild the signature changes; remove and re-add the app in the Accessibility list.
-- **Pastes do not happen in Quizlet:** the window title must contain `quizletTitlePattern`. Check the tab title and adjust the pattern, or add the browser's bundle ID to `quizletApps`.
-- **Focus lands in the wrong field:** adjust `tabsAfterTerm` and `tabsAfterDef`. Quizlet sometimes puts a non-text control between fields.
-- **Logs:** open Console.app and filter on "FlashPaste". Every state change, capture and paste is logged.
-
-## Known limitations
-
-- Quizlet layout changes can break the tab counts.
-- Capture uses a simulated Cmd+C and overwrites the clipboard.
-- Tested with Safari and Preview only. Other apps can be added to `sourceApps` by bundle ID.
-- The app starts disabled on launch.
 
 FlashPaste is an unofficial tool and is not affiliated with Quizlet.
